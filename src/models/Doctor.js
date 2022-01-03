@@ -1,0 +1,44 @@
+const mongoose=require("mongoose");
+const doctorSchema=new mongoose.Schema({
+codeDoctor:{
+    type:String,
+    trim:true,
+    required:true
+},
+dni:{
+    type:String,
+    trim:true,
+    required:true
+},
+especialidad:{
+    type:Array,
+    required:true
+},
+phone:{
+    type:String,
+    trim:true
+},
+email:{
+    type:String,
+    trim:true
+},
+nombres:{
+    type:String,
+    trim:true,
+    required:true
+},
+apellidos:{
+    type:String,
+    trim:true,
+    required:true
+},
+disponibilidad:{
+    type:String,
+    trim:true,
+    required:true
+}
+},{
+    timestamps:true,
+    versionKey:false
+});
+module.exports=mongoose.models.DoctorModel || mongoose.model("DoctorModel",doctorSchema);
