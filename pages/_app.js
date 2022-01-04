@@ -1,10 +1,14 @@
 import "bootstrap/dist/css/bootstrap.css"
+import { useEffect } from "react"
 import("bootstrap/dist/js/bootstrap")
 import("@fortawesome/fontawesome-free/js/brands")
 import("@fortawesome/fontawesome-free/js/solid")
 import("@fortawesome/fontawesome-free/js/fontawesome")
 
 function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    typeof document !== undefined ? require("bootstrap/dist/js/bootstrap") : null;
+  }, []);
   return (
     <>
       <Component {...pageProps} />
