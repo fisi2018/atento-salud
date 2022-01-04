@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import {useForm} from "../../../components/hooks/useForm";
+import axios from "axios";
+import dbConnect from "../../../utils/dbConnect";
+const EnfermedadModel=require("../../../models/Enfermedad");
 export default function Enfermedades({enfermedades}) {
   //const [enfermedades, setEnfermedades] = useState([]);
   const {form,setForm,handleChange}=useForm({
@@ -121,13 +124,42 @@ export default function Enfermedades({enfermedades}) {
 }
 export async function getServerSideProps(){
   try{
-    const response=await fetch(`${API}enfermedad`);
-    const enfermedades=await response.json();
-    return{
-      props:{
-        enfermedades
-      }
+        await dbConnect();
+        const response=await EnfermedadModel.find({});
+        console.log("response ",response);
+        const enfermedades=response.map(doc=>{
+          const enfermedad=doc.toObject()
+          enfermedad._id=enfermedad._id.toString()
+          enfermedad.createdAt=enfermedad.createdAt.toString()
+          enfermedad.updatedAt=enfermedad.updatedAt.toString()
+          return enfermedad
+        });
+      console.log("enfermedades ",enfermedades);
+        return{
+          props:{
+            enfermedades
+          }
+        }
+    }catch(err){
+        console.log("error en request ",err);
+        return{
+          props:{
+            message:"Error en el SSR",
+            error:true
+          }
+        }
     }
+  /*try{
+  console.log("inicio del SSR");
+  const response=await axios.get(`${API}enfermedad`);
+  console.log("dsps de axios ");
+  const enfermedades=await response.data;
+  console.log("antes del return");
+  return{
+    props:{
+      enfermedades
+    }
+  }
   }catch(err){
     console.log("error ",err);
     return{
@@ -136,5 +168,5 @@ export async function getServerSideProps(){
         error:true
       }
     }
-  }
+  }*/
 }

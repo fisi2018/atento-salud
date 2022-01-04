@@ -4,18 +4,18 @@ import { API } from "../../../consts/api";
 
 export default function Especialistas() {
   const [doctores, setDoctores] = useState([]);
-  const fetchData=async()=>{
-    try{
-    const response=await fetch(`${API}doctor`);
-    const doctors=await response.json();
-    console.log(doctors);
-    setDoctores(doctors);
-  }catch(err){
-    console.log("error ",err);
-    
-  }
-  }
   useEffect(()=>{
+    const fetchData=async()=>{
+      try{
+      const response=await fetch(`${API}doctor`);
+      const doctors=await response.json();
+      console.log(doctors);
+      setDoctores(doctors);
+    }catch(err){
+      console.log("error ",err);
+      
+    }
+    }
     fetchData();
   },[]);
   return (
