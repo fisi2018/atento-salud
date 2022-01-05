@@ -4,8 +4,11 @@ import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
+import Loader from "./../../../components/Loader";
+
 export default function PacientesAtender() {
-  const [pacientes, setPacientes] = useState([]);
+  const [pacientes, setPacientes] = useState(false);
+  const [loading,setLoading]=useState(false);
   const [asegurados,setAsegurados]=useState([]);
     const [enfermedades,setEnfermedades]=useState([]);
     const [doctores,setDoctores]=useState([]);
@@ -44,12 +47,17 @@ export default function PacientesAtender() {
   },[]);
   const update=async(e)=>{
     e.preventDefault();
+    setLoading(true);
     try{
       const response=await axios.put(`${API}paciente/updatePaciente`,form);
       const data=await response.data;
+      setLoading(false);
+      data.error?toast.error(data.message):toast.success(data.message);
       console.log("response ",data);
       await fetchData();
     }catch(err){
+      setLoading(false);
+      toast.error("Ha ocurrido un error, vuelva a intentarlo");
       console.log("error ",err);
     }
   }
@@ -65,6 +73,7 @@ export default function PacientesAtender() {
         await fetchData();
       }
     }catch(err){
+      toast.error("Ha ocurrido un error, vuelva a intentarlo");
       console.log("error ",err);
     }
   }
@@ -103,7 +112,8 @@ export default function PacientesAtender() {
                 </tr>
               </thead>
               <tbody>
-                {pacientes.map((paciente,index)=>(
+                {pacientes &&
+                pacientes.map((paciente,index)=>(
                   <tr key={paciente._id} >
                     <th scope="row" >{index+1}</th>
                     <td>{paciente.codAsegurado.nombres}</td>
@@ -131,6 +141,7 @@ export default function PacientesAtender() {
                
               </tbody>
             </table>
+            {!pacientes && <Loader/> }
             {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar información del paciente</h2>
@@ -171,8 +182,12 @@ export default function PacientesAtender() {
                 ))}
               </select>
               <article>
+                {loading?
+              <Loader/>:
+              <>
               <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
               <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+              </>}
               </article>
             </form>
             }

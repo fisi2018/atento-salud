@@ -1,6 +1,9 @@
 import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import {API} from "../../../consts/api";
+import toast,{Toaster} from "react-hot-toast";
+import Loader from "../../../components/Loader";
+import { useState } from "react";
 export default function AgregarUsuario(){
     const {form,handleChange,setForm}=useForm({
         dni:"",
@@ -13,9 +16,11 @@ export default function AgregarUsuario(){
         codAsegurado:"",
         address:""
     });
+    const[loading,setLoading]=useState(false);
     console.log("form ",form);
     const addUser=async(e)=>{
         e.preventDefault();
+        setLoading(true);
         try{
             form.role==="admin" && setForm({...form,
             codAsegurado:""})
@@ -27,12 +32,17 @@ export default function AgregarUsuario(){
                 }
             });
             const json=await response.json();
+            setLoading(false);
+            json.error?toast.error(json.message):toast.success(json.message)
         }catch(err){
+            setLoading(false);
             console.log("error en request ",err);
+            toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde")
         }
     }
     return(
         <LayoutAdmin>
+            <Toaster/>
             <section>
                 <div>
                 <h1>Agregar usuario</h1>
@@ -54,11 +64,22 @@ export default function AgregarUsuario(){
                     <input onChange={handleChange} value={form.role==="admin" ? " ":form.codAsegurado} name="codAsegurado" placeholder="Código de asegurado" type="text"/>
                     }
                     <input onChange={handleChange} value={form.address} name="address" placeholder="Dirección" type="text"/>
+                    {loading?
+                    <div className="loader-block" >
+
+                        <Loader/>
+                    </div>
+                    :
                     <button type="submit">Agregar</button>
+                    }
                 </form>
                 </div>
             </section>
             <style jsx>{`
+            .loader-block{
+                display:flex;
+                justify-content:center;
+            }
             form{
                 display:flex;
                 flex-direction:column;

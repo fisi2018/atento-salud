@@ -4,8 +4,10 @@ import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import {API} from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
+import Loader from "../../../components/Loader";
 export default function Asegurados() {
-  const [users,setUsers]=useState([]);
+  const [users,setUsers]=useState(false);
+  const [loading,setLoading]=useState(false);
   const {form,setForm,handleChange}=useForm({
     visibility:false
   });
@@ -23,14 +25,19 @@ export default function Asegurados() {
   },[]);
   const update=async(e)=>{
     e.preventDefault();
+    setLoading(true);
     try{
-      form.role==="admin" && setForm({...form,codAsegurado:""});
-      const response=await axios.put(`${API}user/updateUser`,form);
+      const codForm=form.role==="admin" ? "" : form.codAsegurado;
+      const response=await axios.put(`${API}user/updateUser`,{...form,codAsegurado:codForm});
       const data=await response.data;
+      setLoading(false);
+      data.error?toast.error(data.message):toast.success(data.message);
       console.log("response ",data);
       await fetchData();
     }catch(err){
+      setLoading(false);
       console.log("error ",err);
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde")
     }
   }
   const removeItem=async(id)=>{
@@ -46,6 +53,7 @@ export default function Asegurados() {
       }
     }catch(err){
       console.log("error ",err);
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde")
     }
   }
   return (
@@ -82,7 +90,9 @@ export default function Asegurados() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user,index)=>(
+                {
+                users &&
+                users.map((user,index)=>(
                   <tr key={user._id} >
                       <th scope="row">{index+1}</th>
                       <td>{user.nombres} {user.apellidos}</td>
@@ -104,6 +114,7 @@ export default function Asegurados() {
                 
               </tbody>
             </table>
+            {!users && <Loader/>}
              {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar información de usuario</h2>
@@ -123,8 +134,13 @@ export default function Asegurados() {
               <input className="form-control" onChange={handleChange} name="codAsegurado" value={form.codAsegurado} placeholder="Código del asegurado" type="text" />
               }
               <article>
+              {
+                loading?<Loader/>:
+                <>
               <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
               <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+                </>
+              }
               </article>
             </form>
             }
@@ -132,6 +148,11 @@ export default function Asegurados() {
         </div>
       </section>
         <style jsx>{`
+        .loader-block{
+          display:flex;
+          justify-content:center;
+          width:100%;
+        }
          h2{
         font-weight:lighter;
         text-align:center;

@@ -4,9 +4,11 @@ import Adminside from "../../../components/AdminSide";
 import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
-
+import Loader from "./../../../components/Loader";
+import toast,{Toaster} from "react-hot-toast";
 export default function Camas() {
-  const [camas,setCamas]=useState([]);
+  const [camas,setCamas]=useState(false);
+  const [loading,setLoading]=useState(false);
   const [pacientes,setPacientes]=useState([]);
   const{form,setForm,handleChange}=useForm({
     visibility:false
@@ -50,7 +52,7 @@ export default function Camas() {
     }
   }
   const update=async()=>{
-  
+    setLoading(true);
     try{
      const dataFormat=form.estadoCama?{
        estadoCama:true
@@ -60,9 +62,13 @@ export default function Camas() {
      }
       const response=await axios.put(`${API}cama/updateCama`,{...form,...dataFormat});
       const data=await response.data;
+      setLoading(false);
       console.log("response ",data);
+      data.error?toast.error(data.message):toast.success(data.message);
       await fetchData();
     }catch(err){
+      setLoading(false);
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde");
       console.log("error ",err);
     }
   }
@@ -70,17 +76,19 @@ export default function Camas() {
     try{
       const response=await axios.post(`${API}cama/removeCama`,{id});
       const data=await response.data;
+      data.error?toast.error(data.message):toast.success(data.message);
       console.log("message ",data);
       await fetchData();
     }catch(err){
       console.log("error ",err);
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde");
     }
   }
   
   return (
   
     <LayoutAdmin>
-
+      <Toaster/>
         <div className="admin-main">
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Camas para internarse</h1>
@@ -107,7 +115,8 @@ export default function Camas() {
                 </tr>
               </thead>
               <tbody>
-                {camas.map((cama,index)=>(
+                {camas &&
+                camas.map((cama,index)=>(
                   <tr key={cama._id} >
                       <th scope="row" >{index+1}</th>
                       {cama.nombrePaciente?
@@ -120,7 +129,9 @@ export default function Camas() {
                       <td>
                         <button onClick={async()=>{
                             await fetchSelectData();
-                            setForm({...cama,id:cama._id,visibility:true,nombrePaciente:cama.nombrePaciente._id})
+                            cama.nombrePaciente?
+                            setForm({...cama,id:cama._id,visibility:true,nombrePaciente:cama.nombrePaciente._id}):
+                            setForm({...cama,id:cama._id,visibility:true})
                         }} >
                           <i className="fas fa-edit" ></i>
                         </button>
@@ -133,6 +144,7 @@ export default function Camas() {
                 
               </tbody>
             </table>
+            {!camas && <Loader/>}
             {form.visibility && 
             <form onSubmit={async(e)=>{
               e.preventDefault();
@@ -151,9 +163,13 @@ export default function Camas() {
                 ))}
               </select>
               }
-              <article>
+              <article>{
+                loading?<Loader/>:
+                <>
               <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
               <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+                </>
+                }
               </article>
             </form>
             }

@@ -2,15 +2,17 @@ import Link from "next/link";
 import Layout from "../components/layout";
 import { useForm } from "../components/hooks/useForm";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {API} from "../consts/api";
 import toast,{Toaster} from "react-hot-toast";
+import Loader from "../components/Loader";
 const initForm={
     email:"",
     password:""
 }
 export default function Login(){
     const {handleChange,form}=useForm(initForm);
+    const [loading,setLoading]=useState(false);
     const {push}=useRouter();
     useEffect(()=>{
 
@@ -25,6 +27,7 @@ export default function Login(){
     },[]);
     const login=async(e)=>{
         e.preventDefault();
+        setLoading(true);
         try{
             const response=await fetch(`${API}auth/login`,{
                 method:"POST",
@@ -35,6 +38,7 @@ export default function Login(){
             });
             const json=await response.json();
             console.log("response ",json);
+            setLoading(false);
             if(json.error){
                 toast.error(json.message);
                 return;
@@ -45,6 +49,7 @@ export default function Login(){
             console.log("credenciales ",userCredential);*/
 
         }catch(err){
+            setLoading(false);
             console.log("Ha ocurrido un error al logearse");
         }
     }
@@ -75,7 +80,11 @@ export default function Login(){
                     </div>
                     <input placeholder="Contraseña" onChange={handleChange} name="password" value={form.password} type="password"/></article>
                 <article className="block-center" >
-                    <button type="submit"  >Iniciar sesión</button>
+                    {
+                        loading ?
+                        <Loader/>:
+                        <button type="submit"  >Iniciar sesión</button>
+                    }
                 </article>
                 
                 <article className="block-center" >

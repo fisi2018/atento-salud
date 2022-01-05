@@ -1,7 +1,9 @@
 import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
-
+import toast,{Toaster} from "react-hot-toast";
+import Loader from "../../../components/Loader";
+import { useState } from "react";
 export default function AgregarDoctor(){
     const {form,setForm,handleChange}=useForm({
         codeDoctor:"",
@@ -13,8 +15,10 @@ export default function AgregarDoctor(){
         apellidos:"",
         disponibilidad:""
     });
+    const [loading,setLoading]=useState(false);
     const addDoctor=async(e)=>{
         e.preventDefault();
+        setLoading(true);
         try{
             const response=await fetch(`${API}doctor/createDoctor`,{
                 method:"POST",
@@ -24,14 +28,19 @@ export default function AgregarDoctor(){
                 }
             });
             const json=await response.json();
+            setLoading(false);
+            json.error?toast.error(json.message):toast.success(json.message);
             console.log("response ", json);
 
         }catch(err){
+            setLoading(false);
+            toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde");
             console.log("error en el request ",err);
         }
     }
     return(
         <LayoutAdmin>
+            <Toaster/>
             <section>
                 <div>
                 <h1>Agregar médico</h1>
@@ -46,11 +55,21 @@ export default function AgregarDoctor(){
                     <input onChange={handleChange} value={form.disponibilidad} name="disponibilidad" placeholder="Disponibilidad" type="text"/>
                     
                     <input onChange={handleChange} value={form.especialidad} name="especialidad" placeholder="Especialidad" type="text"/>
+                    {loading?
+                    <div className="loader-block">
+                        <Loader/>
+                    </div>
+                :    
                     <button type="submit">Agregar</button>
+                }
                 </form>
                 </div>
             </section>
             <style jsx>{`
+            .loader-block{
+                display:flex;
+                justify-content:center;
+            }
             form{
                 display:flex;
                 flex-direction:column;

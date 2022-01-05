@@ -4,8 +4,11 @@ import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
+import Loader from "./../../../components/Loader";
+
 export default function Especialistas() {
-  const [doctores, setDoctores] = useState([]);
+  const [doctores, setDoctores] = useState(false);
+  const [loading,setLoading]=useState(false);
   const {form,setForm,handleChange}=useForm({
     visibility:false,
     id:"",
@@ -34,12 +37,17 @@ export default function Especialistas() {
   },[]);
   const update=async(e)=>{
     e.preventDefault();
+    setLoading(true);
     try{
       const response=await axios.put(`${API}doctor/updateDoctor`,form);
       const data=await response.data;
+      setLoading(false);
       console.log("response ",data);
+      data.error?toast.error(data.message):toast.success(data.message);
       await fetchData();
     }catch(err){
+      setLoading(false);
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde")
       console.log("error ",err);
     }
   }
@@ -55,6 +63,7 @@ export default function Especialistas() {
         await fetchData();
       }
     }catch(err){
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde");
       console.log("error ",err);
     }
   }
@@ -66,7 +75,7 @@ export default function Especialistas() {
         <div className="admin-main">
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Lista de médicos</h1>
-            <p>Nota: Antes de eliminar un médico de la lista asegúrese que no tiene pacientes a su cargo</p>
+            <p>Nota: Antes de eliminar un médico de la lista asegúrese que no tenga pacientes a su cargo</p>
             <div className="input-group px-5 mb-5">
               <input
                 type="text"
@@ -96,7 +105,8 @@ export default function Especialistas() {
                 </tr>
               </thead>
               <tbody>
-                {doctores.map((doctor,index)=>(
+                {doctores &&
+                doctores.map((doctor,index)=>(
                   <tr key={doctor._id} >
                       <th scope="row">{index+1}</th>
                       <td>{doctor.codeDoctor}</td>
@@ -123,6 +133,7 @@ export default function Especialistas() {
                 
               </tbody>
             </table>
+            {!doctores && <Loader/> }
              {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar información de médico</h2>
@@ -135,8 +146,12 @@ export default function Especialistas() {
               <input className="form-control" onChange={handleChange} name="apellidos" value={form.apellidos} placeholder="Apellidos" type="text" />
               <input className="form-control" onChange={handleChange} name="disponibilidad" value={form.disponibilidad} placeholder="Disponibilidad" type="text" />
               <article>
+                {loading?<Loader/>:
+                <>
               <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
               <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+                </>
+                }
               </article>
             </form>
             }

@@ -4,8 +4,11 @@ import { API } from "../../../consts/api";
 import {useForm} from "../../../components/hooks/useForm";
 import axios from "axios";
 import toast,{Toaster} from "react-hot-toast";
+import Loader from "./../../../components/Loader";
+
 export default function Enfermedades() {
-  const [enfermedades, setEnfermedades] = useState([]);
+  const [enfermedades, setEnfermedades] = useState(false);
+  const [loading,setLoading]=useState(false);
   const {form,setForm,handleChange}=useForm({
     visibility:false,
     id:"",
@@ -28,12 +31,17 @@ export default function Enfermedades() {
   },[]);
   const update=async(e)=>{
     e.preventDefault();
+    setLoading(true);
     try{
       const response=await axios.put(`${API}enfermedad/updateEnfermedad`,{id:form.id,codeEnfermedad:form.codeEnfermedad,nombreEnfermedad:form.nombreEnfermedad});
       const data=await response.data;
+      setLoading(false);
       console.log("response ",data);
+      data.error?toast.error(data.message):toast.success(data.message);
       await fetchData();
     }catch(err){
+      setLoading(false);
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde")
       console.log("error ",err);
     }
   }
@@ -49,6 +57,7 @@ export default function Enfermedades() {
         await fetchData();
       }
     }catch(err){
+      toast.error("Ha ocurrido un error en el servidor, vuelva a intentarlo más tarde");
       console.log("error ",err);
     }
   }
@@ -82,7 +91,8 @@ export default function Enfermedades() {
                 </tr>
               </thead>
               <tbody>
-              {enfermedades.map((enfermedad,index)=>(
+              {enfermedades &&
+              enfermedades.map((enfermedad,index)=>(
                 <tr key={enfermedad._id}>
                   <th scope="row" >{index+1}</th>
                   <td>{enfermedad.nombreEnfermedad}</td>
@@ -98,14 +108,19 @@ export default function Enfermedades() {
                 
               </tbody>
             </table>
+            {!enfermedades && <Loader/> }
             {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar enfermedad</h2>
               <input onChange={handleChange} name="codeEnfermedad" value={form.codeEnfermedad} placeholder="Código de la enfermedad" type="text" />
               <input onChange={handleChange} name="nombreEnfermedad" value={form.nombreEnfermedad} placeholder="Nombre de la enfermedad" type="text" />
               <article>
+                {loading?<Loader/>:
+                <>
               <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
               <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+                </>
+                }
               </article>
             </form>
             }
