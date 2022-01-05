@@ -1,9 +1,17 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
-
+import toast,{Toaster} from "react-hot-toast";
 export default function PacientesAtender() {
   const [pacientes, setPacientes] = useState([]);
+  const [asegurados,setAsegurados]=useState([]);
+    const [enfermedades,setEnfermedades]=useState([]);
+    const [doctores,setDoctores]=useState([]);
+  const {form,setForm,handleChange}=useForm({
+    visibility:false
+  });
   const fetchData=async()=>{
     try{
     const response=await fetch(`${API}paciente`);
@@ -15,12 +23,55 @@ export default function PacientesAtender() {
     
   }
   }
+  const fetchSelectOptions=async()=>{
+    try{
+        const response=await fetch(`${API}user/asegurados`);
+        const asegurados=await response.json();
+        const responseEnfermedad=await fetch(`${API}enfermedad`);
+        const enfermedades=await responseEnfermedad.json();
+        const responseDoctor=await fetch(`${API}doctor`);
+        const doctores=await responseDoctor.json();
+        setAsegurados(asegurados);
+        setEnfermedades(enfermedades);
+        setDoctores(doctores);
+    }catch(err){
+        console.log("error ",err);
+        
+    }
+  }
   useEffect(()=>{
     fetchData();
   },[]);
+  const update=async(e)=>{
+    e.preventDefault();
+    try{
+      const response=await axios.put(`${API}paciente/updatePaciente`,form);
+      const data=await response.data;
+      console.log("response ",data);
+      await fetchData();
+    }catch(err){
+      console.log("error ",err);
+    }
+  }
+  const removeItem=async(id)=>{
+    try{
+      const response=await axios.post(`${API}paciente/removePaciente`,{id});
+      const data=await response.data;
+      console.log("message ",data);
+      if(data.error){
+        toast.error(data.message);
+      }else{
+        toast.success(data.message);
+        await fetchData();
+      }
+    }catch(err){
+      console.log("error ",err);
+    }
+  }
   return (
   
     <LayoutAdmin>
+      <Toaster/>
       <section>
 
         <div className="admin-main">
@@ -62,10 +113,16 @@ export default function PacientesAtender() {
                     <td>{paciente.codEnfermedad.nombreEnfermedad}</td>
                     <td>{paciente.codAsegurado.dni}</td>
                     <td>
-                      <button>
+                      <button onClick={async()=>{
+                        await fetchSelectOptions();
+                        setForm({...paciente,id:paciente._id,
+                        doctor:paciente.doctor._id,
+                        codEnfermedad:paciente.codEnfermedad._id,
+                        codAsegurado:paciente.codAsegurado._id
+                        ,visibility:true})}} >
                         <i className="fas fa-edit" ></i>
                       </button>
-                      <button>
+                      <button onClick={()=>removeItem(paciente._id)} >
                         <i className="fas fa-trash-alt" ></i>
                       </button>
                     </td>
@@ -74,18 +131,90 @@ export default function PacientesAtender() {
                
               </tbody>
             </table>
+            {form.visibility && 
+            <form onSubmit={update} >
+              <h2>Editar información del paciente</h2>
+              <input className="form-control" onChange={handleChange} name="fecha" value={form.fecha} placeholder="Fecha de ingreso del paciente" type="date" />
+              <input className="form-control" onChange={handleChange} name="hora" value={form.hora} placeholder="Hora de ingreso" type="time" />
+              <select className="form-control" onChange={handleChange} value={form.codAsegurado} name="codAsegurado" >
+                <option value="">Seleccione el asegurado</option>
+                {asegurados.map((asegurado)=>(
+                  <option value={asegurado._id}>{asegurado.codAsegurado}-{asegurado.nombres} {asegurado.apellidos}</option>
+                ))}
+              </select>
+              <select onChange={handleChange} className="form-control" value={form.mes} name="mes">
+                <option value="">Seleccione el mes de ingreso</option>
+                <option value="Enero">Enero</option>
+                <option value="Febrero">Febrero</option>
+                <option value="Marzo">Marzo</option>
+                <option value="Abril">Abril</option>
+                <option value="Mayo">Mayo</option>
+                <option value="Junio">Junio</option>
+                <option value="Julio">Julio</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Setiembre">Setiembre</option>
+                <option value="Octubre">Octubre</option>
+                <option value="Noviembre">Noviembre</option>
+                <option value="Diciembre">Diciembre</option>
+              </select>
+              <input className="form-control" onChange={handleChange} name="year" value={form.year} placeholder="Año de ingreso" type="number" />
+              <select value={form.codEnfermedad} className="form-control" name="codEnfermedad" onChange={handleChange}>
+                <option value="">Seleccione la enfermedad</option>
+                {enfermedades.map((enfermedad)=>(
+                  <option value={enfermedad._id}>{enfermedad.codeEnfermedad}-{enfermedad.nombreEnfermedad}</option>
+                ))}
+              </select>
+              <select value={form.doctor} className="form-control" onChange={handleChange} name="doctor">
+                <option value="">Seleccione el doctor a cargo</option>
+                {doctores.map((doctor)=>(
+                  <option value={doctor._id}>{doctor.codeDoctor}-{doctor.nombres} {doctor.apellidos}-{doctor.especialidad.join(",")}</option>
+                ))}
+              </select>
+              <article>
+              <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
+              <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+              </article>
+            </form>
+            }
           </div>
         </div>
       </section>
         <style jsx>{`
-        td>button{
-          background-color:transparent;
-          color:white;
-          border:0;
-        }
-        section{
-          padding:1rem;
-        }
+        h2{
+        font-weight:lighter;
+        text-align:center;
+      }
+      article{
+        display:flex;
+        justify-content:space-around;
+      }
+      form{
+        box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.2);
+        display:flex;
+        flex-direction:column;
+        padding:2rem;
+      }
+      form>input,select{
+        margin:0.5rem;
+        border-radius:0.5rem;
+        width:20rem;
+        padding:0.5rem;
+        border:0.1rem solid rgba(0,0,0,0.2);
+      }
+      td>button{
+        background-color:transparent;
+        color:white;
+        border:0;
+        cursor:pointer;
+      }
+      table{
+        overflow:auto;
+   
+      }
+      
+      section{
+        padding:1rem;
+      }
         table{
           overflow:auto;
         }

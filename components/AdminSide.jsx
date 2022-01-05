@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getNameFormat } from "../utils";
 
 const Sidebar = () => {
   const {push,pathname}=useRouter();
+  const [user,setUser]=useState(false);
   const [option,setOption]=useState({
     pacientes:false,
     camas:false,
@@ -11,6 +13,10 @@ const Sidebar = () => {
     usuarios:false,
     enfermedades:false
   });
+  useEffect(()=>{
+    const data=JSON.parse(localStorage.getItem("user_login"));
+    setUser(data);
+  },[]);
   console.log("path ",pathname.split("/").pop());
   return (
     <>
@@ -24,7 +30,7 @@ const Sidebar = () => {
             <img src="https://cdn.pixabay.com/photo/2017/07/18/23/23/user-2517433__480.png" alt="admin profile" />
           </span>
           <div className="profile-info-block" >
-            <p>Nombres Apellidos</p>
+            <p>{user && getNameFormat(user.nombres,user.apellidos)}</p>
             <p>Administrador</p>
           </div>
           <span>

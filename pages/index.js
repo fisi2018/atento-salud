@@ -4,7 +4,7 @@ import { useForm } from "../components/hooks/useForm";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import {API} from "../consts/api";
-
+import toast,{Toaster} from "react-hot-toast";
 const initForm={
     email:"",
     password:""
@@ -35,7 +35,11 @@ export default function Login(){
             });
             const json=await response.json();
             console.log("response ",json);
-            if(json.error) return;
+            if(json.error){
+                toast.error(json.message);
+                return;
+            };
+            localStorage.setItem("user_login",JSON.stringify(json.user));
             json.user.role==="admin"?push("/admin"):push("/user/main");
             /*const userCredential=await signInWithEmailAndPassword(auth,form.email,form.password);
             console.log("credenciales ",userCredential);*/
@@ -47,7 +51,7 @@ export default function Login(){
     
     return(
         <Layout>
-
+            <Toaster/>
         <section>
             <div>
                 <img src="https://media.istockphoto.com/vectors/group-of-doctors-standing-at-hospital-building-vector-id1289188556?b=1&k=20&m=1289188556&s=170667a&w=0&h=nKc4n0Z1yk12PY9Ybkwx6jdyQTlwQrDdV2-f-7rb2II=" alt="sistema hospitalario "/>

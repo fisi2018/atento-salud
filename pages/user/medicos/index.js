@@ -59,24 +59,7 @@ export default function Medicos(){
                 
                   </tr>
                 ))}
-                <tr>
-                  <th scope="row">0001</th>
-                  <td>Dr. Julio Gómez</td>
-                  <td>A1WX_622</td>
-                  <td>Ver CV</td>
-                  <td>Especialidad_01</td>
-                  <td>04</td>
-                  <td>Ver horario</td>
-                </tr>
-                <tr>
-                  <th scope="row">0002</th>
-                  <td>Dr. Jhon Cutipa</td>
-                  <td>A1WX_622</td>
-                  <td>Ver CV</td>
-                  <td>Especialidad_01</td>
-                  <td>06</td>
-                  <td>Ver horario</td>
-                </tr>
+                
               </tbody>
             </table>
             </div>

@@ -4,7 +4,20 @@ const CamaFinalModel=require("../../../models/Cama");
 export default async function handler(req,res){
     try{
         const {codeCama,estadoCama,nombrePaciente}=req.body;
-        const cama=new CamaFinalModel({codeCama,estadoCama,nombrePaciente});
+        let form={};
+        if(!nombrePaciente){
+            form={
+                codeCama,
+                estadoCama
+            }
+        }else{
+            form={
+                codeCama,
+                estadoCama,
+                nombrePaciente
+            }
+        }
+        const cama=new CamaFinalModel(form);
         cama.save();
         res.send(
             {

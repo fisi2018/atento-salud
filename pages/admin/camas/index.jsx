@@ -1,10 +1,17 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import Adminside from "../../../components/AdminSide";
+import { useForm } from "../../../components/hooks/useForm";
 import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 
 export default function Camas() {
   const [camas,setCamas]=useState([]);
+  const [pacientes,setPacientes]=useState([]);
+  const{form,setForm,handleChange}=useForm({
+    visibility:false
+  });
+ console.log("form ",form);
   const fetchData=async()=>{
     try{
     const response=await fetch(`${API}cama`);
@@ -17,9 +24,59 @@ export default function Camas() {
     
   }
   }
+  const fetchGroup=async()=>{
+    await fetchSelectData();
+   await fetchData();
+  }
   useEffect(() => {
-    fetchData();
+    fetchGroup();
   }, []);
+  const getPaciente=(id)=>{
+    const paciente=pacientes.find((paciente)=>{
+    if(paciente.codAsegurado._id===id)return true
+    });
+    return paciente
+  }
+  const fetchSelectData=async()=>{
+    try{
+        const response=await fetch(`${API}paciente`);
+        const pacientes=await response.json();
+        console.log("pacientes ",pacientes);
+        setPacientes(pacientes);
+        
+    }catch(err){
+        console.log("error ",err);
+        
+    }
+  }
+  const update=async()=>{
+  
+    try{
+     const dataFormat=form.estadoCama?{
+       estadoCama:true
+     }:{
+       estadoCama:false,
+       nombrePaciente:""
+     }
+      const response=await axios.put(`${API}cama/updateCama`,{...form,...dataFormat});
+      const data=await response.data;
+      console.log("response ",data);
+      await fetchData();
+    }catch(err){
+      console.log("error ",err);
+    }
+  }
+  const removeItem=async(id)=>{
+    try{
+      const response=await axios.post(`${API}cama/removeCama`,{id});
+      const data=await response.data;
+      console.log("message ",data);
+      await fetchData();
+    }catch(err){
+      console.log("error ",err);
+    }
+  }
+  
   return (
   
     <LayoutAdmin>
@@ -53,14 +110,21 @@ export default function Camas() {
                 {camas.map((cama,index)=>(
                   <tr key={cama._id} >
                       <th scope="row" >{index+1}</th>
-                      <td>{cama.nombrePaciente.codAsegurado}</td>
+                      {cama.nombrePaciente?
+                      <td>{getPaciente(cama.nombrePaciente.codAsegurado).codAsegurado.nombres} {getPaciente(cama.nombrePaciente.codAsegurado).codAsegurado.apellidos}</td>
+                      :
+                      <td>Sin paciente</td>
+                      }
                       <td>{cama.codeCama}</td>
                       <td>{cama.estadoCama?"Ocupada":"Libre"}</td>
                       <td>
-                        <button>
+                        <button onClick={async()=>{
+                            await fetchSelectData();
+                            setForm({...cama,id:cama._id,visibility:true,nombrePaciente:cama.nombrePaciente._id})
+                        }} >
                           <i className="fas fa-edit" ></i>
                         </button>
-                        <button>
+                        <button onClick={()=>removeItem(cama._id)} >
                           <i className="fas fa-trash-alt" ></i>
                         </button>
                       </td>
@@ -69,14 +133,60 @@ export default function Camas() {
                 
               </tbody>
             </table>
+            {form.visibility && 
+            <form onSubmit={async(e)=>{
+              e.preventDefault();
+              await update()}} >
+              <h2>Editar cama</h2>
+              <input className="form-control" onChange={handleChange} name="codeCama" value={form.codeCama} placeholder="Código de la cama" type="text" />
+              <select className="form-control" onChange={handleChange}  value={form.estadoCama} name="estadoCama" >
+                <option value="">Libre</option>
+                <option value={true}>Ocupada</option>
+              </select>
+              {form.estadoCama && 
+              <select className="form-control" onChange={handleChange} value={form.nombrePaciente} name="nombrePaciente" >
+                <option value="">Seleccione un paciente</option>
+                {pacientes.map((paciente)=>(
+                  <option value={paciente._id}>{paciente.codAsegurado.codAsegurado}-{paciente.codAsegurado.nombres} {paciente.codAsegurado.apellidos}-{paciente.codEnfermedad.nombreEnfermedad}</option>
+                ))}
+              </select>
+              }
+              <article>
+              <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
+              <button type="submit" className="btn btn-primary" >Guardar cambios</button>
+              </article>
+            </form>
+            }
           </div>
         </div>
         <style jsx>{`
-        td>button{
-          background-color:transparent;
-          color:white;
-          border:0;
-        }
+         h2{
+        font-weight:lighter;
+        text-align:center;
+      }
+      form{
+        box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.2);
+        display:flex;
+        flex-direction:column;
+        padding:2rem;
+      }
+      form>input,select{
+        margin:0.5rem;
+        border-radius:0.5rem;
+        width:20rem;
+        padding:0.5rem;
+        border:0.1rem solid rgba(0,0,0,0.2);
+      }
+      td>button{
+        background-color:transparent;
+        color:white;
+        border:0;
+      }
+      article{
+        display:flex;
+        justify-content:space-around;
+      }
+     
         .admin-main{
           padding:1rem;
         }

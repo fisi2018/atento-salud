@@ -13,7 +13,9 @@ export default function HeaderAdmin(){
             {showNav && 
             <ul>
                 <li>
-                    <button onClick={()=>push("/login")} >Cerrar sesión</button>
+                    <button onClick={()=>{
+                        localStorage.removeItem("user_login");
+                        push("/")}} >Cerrar sesión</button>
                 </li>
             </ul>
             }

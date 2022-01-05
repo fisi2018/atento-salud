@@ -3,17 +3,17 @@ import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import {useForm} from "../../../components/hooks/useForm";
 import axios from "axios";
-import dbConnect from "../../../utils/dbConnect";
-const EnfermedadModel=require("../../../models/Enfermedad");
-export default function Enfermedades({enfermedades}) {
-  //const [enfermedades, setEnfermedades] = useState([]);
+import toast,{Toaster} from "react-hot-toast";
+export default function Enfermedades() {
+  const [enfermedades, setEnfermedades] = useState([]);
   const {form,setForm,handleChange}=useForm({
     visibility:false,
+    id:"",
     codeEnfermedad:"",
     nombreEnfermedad:""
   });
   
-  /*const fetchData=async()=>{
+  const fetchData=async()=>{
       try{
     const response=await fetch(`${API}enfermedad`);
     const enfermedades=await response.json();
@@ -21,15 +21,40 @@ export default function Enfermedades({enfermedades}) {
     setEnfermedades(enfermedades);
   }catch(err){
     console.log("error ",err);
-    
-    
   }
   }
   useEffect(()=>{
     fetchData();
-  },[])*/
+  },[]);
+  const update=async(e)=>{
+    e.preventDefault();
+    try{
+      const response=await axios.put(`${API}enfermedad/updateEnfermedad`,{id:form.id,codeEnfermedad:form.codeEnfermedad,nombreEnfermedad:form.nombreEnfermedad});
+      const data=await response.data;
+      console.log("response ",data);
+      await fetchData();
+    }catch(err){
+      console.log("error ",err);
+    }
+  }
+  const removeItem=async(id)=>{
+    try{
+      const response=await axios.post(`${API}enfermedad/removeEnfermedad`,{id});
+      const data=await response.data;
+      console.log("message ",data);
+      if(data.error){
+        toast.error(data.message)
+      }else{
+        toast.success(data.message);
+        await fetchData();
+      }
+    }catch(err){
+      console.log("error ",err);
+    }
+  }
   return (
     <LayoutAdmin>
+      <Toaster/>
       <section>
 
         <div className="admin-main">
@@ -63,9 +88,9 @@ export default function Enfermedades({enfermedades}) {
                   <td>{enfermedad.nombreEnfermedad}</td>
                   <td>{enfermedad.codeEnfermedad}</td>
                   <td>
-                    <button onClick={()=>setForm({...form,visibility:true,nombreEnfermedad:enfermedad.nombreEnfermedad,codeEnfermedad:enfermedad.codeEnfermedad})
+                    <button onClick={()=>setForm({...form,visibility:true,id:enfermedad._id,nombreEnfermedad:enfermedad.nombreEnfermedad,codeEnfermedad:enfermedad.codeEnfermedad})
                     } ><i className="fas fa-edit" ></i></button>
-                    <button><i className="fas fa-trash-alt"></i></button>
+                    <button onClick={()=>removeItem(enfermedad._id)} ><i className="fas fa-trash-alt"></i></button>
                   </td>
                   
                 </tr>
@@ -74,13 +99,13 @@ export default function Enfermedades({enfermedades}) {
               </tbody>
             </table>
             {form.visibility && 
-            <form>
+            <form onSubmit={update} >
               <h2>Editar enfermedad</h2>
               <input onChange={handleChange} name="codeEnfermedad" value={form.codeEnfermedad} placeholder="Código de la enfermedad" type="text" />
               <input onChange={handleChange} name="nombreEnfermedad" value={form.nombreEnfermedad} placeholder="Nombre de la enfermedad" type="text" />
               <article>
               <button className="btn btn-danger" onClick={()=>setForm({...form,visibility:false})}>Cancelar</button>
-              <button className="btn btn-primary" >Guardar cambios</button>
+              <button type="submit" className="btn btn-primary" >Guardar cambios</button>
               </article>
             </form>
             }
@@ -122,7 +147,7 @@ export default function Enfermedades({enfermedades}) {
       
   );
 }
-export async function getServerSideProps(){
+/*export async function getServerSideProps(){
   try{
         await dbConnect();
         const response=await EnfermedadModel.find({});
@@ -149,24 +174,4 @@ export async function getServerSideProps(){
           }
         }
     }
-  /*try{
-  console.log("inicio del SSR");
-  const response=await axios.get(`${API}enfermedad`);
-  console.log("dsps de axios ");
-  const enfermedades=await response.data;
-  console.log("antes del return");
-  return{
-    props:{
-      enfermedades
-    }
-  }
-  }catch(err){
-    console.log("error ",err);
-    return{
-      props:{
-        message:"Ha ocurrido un error en el SSR",
-        error:true
-      }
-    }
-  }*/
-}
+}*/

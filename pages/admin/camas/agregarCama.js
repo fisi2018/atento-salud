@@ -6,7 +6,7 @@ import { API } from "../../../consts/api";
 export default function AgregarCama(){
     const {form,handleChange,setForm}=useForm({
         codeCama:"",
-        estadoCama:false,
+        estadoCama:"",
         nombrePaciente:""
     });
     const [pacientes,setPacientes]=useState([]);
@@ -28,17 +28,15 @@ export default function AgregarCama(){
     const addCama=async(e)=>{
         e.preventDefault();
         try{
-            form.estadoCama?setForm({
-                ...form,
+            const dataFormat=form.estadoCama==="ocupado"?{
                 estadoCama:true
-            }):setForm({
-                ...form,
+            }:{
                 estadoCama:false,
                 nombrePaciente:""
-            });
+            }
             const response=await fetch(`${API}cama/createCama`,{
                 method:"POST",
-                body:JSON.stringify(form),
+                body:JSON.stringify({...form,...dataFormat}),
                 headers:{
                     "Content-Type":"application/json"
                 }
@@ -59,10 +57,10 @@ export default function AgregarCama(){
                     <input onChange={handleChange} name="codeCama" value={form.codeCama} placeholder="Código de la cama" type="text"/>
                     <select  onChange={handleChange} value={form.estadoCama} name="estadoCama">
                         <option  value="">Seleccione el estado de la cama</option>
-                        <option value="">Libre</option>
-                        <option value={1} >Ocupado</option>
+                        <option value="libre">Libre</option>
+                        <option value="ocupado" >Ocupado</option>
                     </select>
-                    {form.estadoCama && 
+                    {form.estadoCama==="ocupado" && 
                     <select  onChange={handleChange} value={form.nombrePaciente} name="nombrePaciente">
                         <option value="">Seleccione el paciente</option>
                         {pacientes.map((paciente)=>(

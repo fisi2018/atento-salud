@@ -1,16 +1,27 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getNameFormat } from "../utils";
 
 export default function UserSide(){
-    const {pathname}=useRouter();
+    const {pathname,push}=useRouter();
     const [option,setOption]=useState({
     pacientes:false,
+    profile:false,
     camas:false,
     medicos:false,
     usuarios:false,
     enfermedades:false
   });
+  const [user,setUser]=useState(false);
+    useEffect(()=>{
+        const data=JSON.parse(localStorage.getItem("user_login"));
+        setUser(data);
+    },[]);
+  const logout=()=>{
+    localStorage.removeItem("user_login");
+    push("/");
+  }
     return(
          <>
       <div className="adminSide-block" >
@@ -18,17 +29,30 @@ export default function UserSide(){
           <h1>Atento Salud</h1>
         </header>
         <article>
-          <div className="profile-block" >
-          <span className="profile-img-block" >
-            <img src="https://cdn.pixabay.com/photo/2017/07/18/23/23/user-2517433__480.png" alt="admin profile" />
-          </span>
-          <div className="profile-info-block" >
-            <p>Nombres Apellidos</p>
-            <p>Asegurado</p>
+          <div className="dropdown-profile-block" >
+
+          <div onClick={()=>!option.profile ? setOption({...option,profile:true}) : setOption({...option,profile:false})}   className=" profile-block" >
+            <span className="profile-img-block" >
+              <img src="https://cdn.pixabay.com/photo/2017/07/18/23/23/user-2517433__480.png" alt="admin profile" />
+            </span>
+            <div className="profile-info-block" >
+              <p>{user && getNameFormat(user.nombres,user.apellidos)}</p>
+              <p>Asegurado</p>
+            </div>
+            <span className={option.profile && `active-icon`} >
+              <i className="fas fa-sort-down" />
+            </span>
           </div>
-          <span>
-            <i className="fas fa-sort-down" />
-          </span>
+          {option.profile && 
+                  <div onClick={logout} className="dropdown-title-element dropdown-element">
+                    <span>
+                      <i className="fas fa-dot-circle" ></i>
+                    </span>
+                    <p>Cerrar sesión</p>
+                  </div>
+                
+                  
+            }
           </div>
         </article>
         <span>
@@ -196,6 +220,10 @@ export default function UserSide(){
           cursor:pointer;
           align-items:center;
           height:100%;
+        }
+        .dropdown-profile-block{
+          display:flex;
+          flex-direction:column;
         }
         .profile-img-block{
           display:flex;
