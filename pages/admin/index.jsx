@@ -59,7 +59,7 @@ export default function index() {
           <p>{users.length}/100</p>
         </div>
         <div className="pacientes-block" >
-          <h2>Número de pacientes</h2>
+          <h2>Número de pacientes a atender</h2>
           
           <article>
             <span className="square-block-paciente" ></span>
@@ -117,7 +117,7 @@ export default function index() {
             }
             
           </div>
-          <p >{medicos.length}</p>
+          <p className="medicos-number-element" >{medicos.length}</p>
         </div>
       </div>
       <style jsx>{`
@@ -194,6 +194,11 @@ export default function index() {
         }
         .admin-icon{
         color:#49CCB8;
+      }
+      .medicos-number-element{
+        text-align:center;
+        font-weight:bolder;
+        font-size:2rem;
       }
       `}</style>
     </LayoutAdmin>

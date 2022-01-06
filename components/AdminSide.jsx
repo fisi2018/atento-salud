@@ -83,7 +83,7 @@ const Sidebar = () => {
                     <span>
                       <i className="fas fa-dot-circle" ></i>
                     </span>
-                    <p>Agregar paciente</p>
+                    <p>Agregar paciente a atender</p>
                   </div>
                   </Link>
                   </>}

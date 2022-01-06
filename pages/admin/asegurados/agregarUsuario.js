@@ -97,7 +97,7 @@ export default function AgregarUsuario(){
                     {form.role==="user" && 
                     <div className="form-floating">
                         <input className="form-control" onChange={handleChange} value={form.role==="admin" ? " ":form.codAsegurado} name="codAsegurado" placeholder="Código de asegurado" type="text"/>
-                        <label htmlFor="codAsegurado"></label>
+                        <label htmlFor="codAsegurado">Código del asegurado</label>
                     </div>
                     }
                     <div className="form-floating">

@@ -81,7 +81,7 @@ export default function AgregarPaciente(){
   </ol>
 </nav>     
                 <div className="agregar-block">
-                <h1>Agregar paciente</h1>
+                <h1>Agregar paciente a atender</h1>
                 <hr/>
                 <form className="form-floating" onSubmit={addPaciente} >
                     <input className="form-control" onChange={handleChange} name="fecha" value={form.fecha} placeholder="Fecha" type="date"/>
