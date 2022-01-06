@@ -5,6 +5,7 @@ import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import {API} from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "../../../components/Loader";
+import Link from "next/link";
 export default function Asegurados() {
   const [users,setUsers]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -60,7 +61,16 @@ export default function Asegurados() {
     <LayoutAdmin>
       <Toaster/>
       <section>
-
+        <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Usuarios</li>
+  </ol>
+</nav>
         <div className="admin-main">
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Usuarios</h1>
@@ -118,20 +128,39 @@ export default function Asegurados() {
              {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar información de usuario</h2>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="address" value={form.address} placeholder="Dirección" type="text" />
+                <label htmlFor="address">Dirección de contacto</label></div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="dni" value={form.dni} placeholder="DNI" type="number" />
+                <label htmlFor="dni">DNI del usuario</label></div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="phone" value={form.phone} placeholder="Teléfono de contacto" type="number" />
+                <label htmlFor="phone">Teléfono de contacto</label></div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="email" value={form.email} placeholder="Email con el que ingresará" type="email" />
+                <label htmlFor="email">Email con el que ingresará al sistema</label></div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="password" value={form.password} placeholder="Contraseña" type="text" />
+                <label htmlFor="password">Contraseña</label></div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="nombres" value={form.nombres} placeholder="Nombres" type="text" />
+                <label htmlFor="nombres">Nombres del usuario</label></div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="apellidos" value={form.apellidos} placeholder="Apellidos" type="text" />
-              <select className="form-control" onChange={handleChange} value={form.role} name="role">
-                <option value="">Seleccione el rol a asignar</option>
+                <label htmlFor="apellidos">Apellidos del usuario</label></div>
+                <div className="form-floating">
+              <select className="form-select" onChange={handleChange} value={form.role} name="role">
+                <option value="">-</option>
                 <option value="user">Usuario regular</option>
                 <option value="admin">Administrador</option>
               </select>
+                  <label htmlFor="role">Rol del usuario</label></div>
               {form.role==="user" && 
-              <input className="form-control" onChange={handleChange} name="codAsegurado" value={form.codAsegurado} placeholder="Código del asegurado" type="text" />
+              <div className="form-floating">
+                <input className="form-control" onChange={handleChange} name="codAsegurado" value={form.codAsegurado} placeholder="Código del asegurado" type="text" />
+                <label htmlFor="codAsegurado">Código de asegurado del usuario</label>
+              </div>
               }
               <article>
               {
@@ -163,13 +192,8 @@ export default function Asegurados() {
         flex-direction:column;
         padding:2rem;
       }
-      form>input,
-      select{
-        margin:0.5rem;
-        border-radius:0.5rem;
-        width:20rem;
-        padding:0.5rem;
-        border:0.1rem solid rgba(0,0,0,0.2);
+      .form-floating{
+        margin:0.5rem 0;
       }
       td>button{
         background-color:transparent;

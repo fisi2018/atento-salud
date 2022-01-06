@@ -4,6 +4,7 @@ import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "./../../../components/Loader";
+import Link from "next/link";
 export default function AgregarPaciente(){
     const [asegurados,setAsegurados]=useState([]);
     const [loading,setLoading]=useState(false);
@@ -63,23 +64,61 @@ export default function AgregarPaciente(){
     return(
         <LayoutAdmin>
             <Toaster/>
-            <section>     
-                <div>
+            <section>
+                 <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+      <li className="breadcrumb-item">
+      <Link href="/admin/pacientes-atender" >
+      <a >Pacientes</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Agregar pacientes</li>
+  </ol>
+</nav>     
+                <div className="agregar-block">
                 <h1>Agregar paciente</h1>
                 <hr/>
-                <form onSubmit={addPaciente} >
-                    <input onChange={handleChange} name="fecha" value={form.fecha} placeholder="Fecha" type="date"/>
-                    <select onChange={handleChange} value={form.codAsegurado} name="codAsegurado">
-                        <option selected value="">Seleccione el asegurado</option>
+                <form className="form-floating" onSubmit={addPaciente} >
+                    <input className="form-control" onChange={handleChange} name="fecha" value={form.fecha} placeholder="Fecha" type="date"/>
+                    <label htmlFor="fecha">Ingresar fecha de atención</label>
+                    <div className="form-floating">
+
+                    <select className="form-select" onChange={handleChange} value={form.codAsegurado} name="codAsegurado" >
+                        <option selected value="">-</option>
                         {asegurados.map((asegurado)=>(
                             <option key={asegurado.key} value={asegurado._id}>{asegurado.codAsegurado} - {asegurado.nombres} {asegurado.apellidos}</option>
                         ))}
                         
                     </select>
-                    <input onChange={handleChange} value={form.hora} name="hora" placeholder="Hora" type="time"/>
-                    <input onChange={handleChange} value={form.year} name="year" placeholder="Año" type="number"/>
-                    <select onChange={handleChange} value={form.mes} name="mes" >
-                        <option value="">Seleccione el mes</option>
+                    <label htmlFor="codAsegurado">Seleccione el asegurado a atender</label>
+                    </div>
+                    <div className="form-floating">
+
+                    <input className="form-control" onChange={handleChange} value={form.hora} name="hora" placeholder="Hora" type="time"/>
+                    <label htmlFor="hora">Seleccione la hora </label>
+                    </div>
+                    <div className="form-floating">
+                    <select className="form-select" onChange={handleChange} name="doctor" value={form.doctor} >
+                        <option value="">-</option>
+                        {doctores.map((doctor)=>(
+                            <option key={doctor._id} value={doctor._id}>{doctor.codeDoctor} - {doctor.nombres} {doctor.apellidos}</option>
+                        ))}
+                    </select>
+                    <label htmlFor="doctor">Seleccione el doctor</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.year} name="year" placeholder="Año" type="number"/>
+                    <label htmlFor="year">Ingrese el año </label>
+                    </div>
+                    <div className="form-floating">
+
+                    <select className="form-select" onChange={handleChange} value={form.mes} name="mes" >
+                        <option value="">-</option>
                         <option value="Enero">Enero</option>
                         <option value="Febrero">Febrero</option>
                         <option value="Marzo">Marzo</option>
@@ -93,18 +132,18 @@ export default function AgregarPaciente(){
                         <option value="Noviembre">Noviembre</option>
                         <option value="Diciembre">Diciembre</option>
                     </select>
-                    <select onChange={handleChange} value={form.codEnfermedad} name="codEnfermedad" >
-                        <option value="">Seleccione la enfermedad</option>
+                    <label htmlFor="mes">Seleccione el mes </label>
+                    </div>
+                    <div className="form-floating">
+                    <select className="form-select" onChange={handleChange} value={form.codEnfermedad} name="codEnfermedad" >
+                        <option value="">-</option>
                         {enfermedades.map((enfermedad)=>(
                             <option key={enfermedad._id} value={enfermedad._id}>{enfermedad.nombreEnfermedad}</option>
                         ))}
                     </select>
-                    <select onChange={handleChange} name="doctor" value={form.doctor} >
-                        <option value="">Seleccione el doctor a cargo</option>
-                        {doctores.map((doctor)=>(
-                            <option key={doctor._id} value={doctor._id}>{doctor.codeDoctor} - {doctor.nombres} {doctor.apellidos}</option>
-                        ))}
-                    </select>
+                    <label htmlFor="codEnfermedad">Seleccione la enfermedad </label>
+                    </div>
+                    
                     {
                         loading?
                         <div className="loader-block">
@@ -118,6 +157,9 @@ export default function AgregarPaciente(){
                 </div>
             </section>
             <style jsx>{`
+            a{
+                text-decoration:none;
+            }
             .loader-block{
                 display:flex;
                 justify-content:center;
@@ -126,14 +168,10 @@ export default function AgregarPaciente(){
                 display:flex;
                 flex-direction:column;
             }
-            input{
-                margin:1rem 0;
-                padding:0.5rem;
-            }
-            select{
-                margin:0.5rem 0;
-                padding:0.5rem;
-            }
+            
+           .form-floating{
+               margin:0.5rem 0;
+           }
             section{
                 display:flex;
                 flex-direction:column;
@@ -141,7 +179,7 @@ export default function AgregarPaciente(){
                 background-color:#F9FBFD;
                 padding:1rem 0;
             }
-            div{
+            .agregar-block{
                 background-color:#fff;
                 padding:0.5rem;
                 width:90%;

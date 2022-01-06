@@ -29,7 +29,9 @@ export default function LayoutAdmin({children}){
             align-items: center;
             padding: 10vh 10%;
           }
-          
+          a{
+              text-decoration:none;
+          }
           .admin-content {
             text-align: center;
             display: grid;

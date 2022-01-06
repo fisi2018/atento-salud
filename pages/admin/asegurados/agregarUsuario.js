@@ -4,6 +4,7 @@ import {API} from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "../../../components/Loader";
 import { useState } from "react";
+import Link from "next/link";
 export default function AgregarUsuario(){
     const {form,handleChange,setForm}=useForm({
         dni:"",
@@ -44,26 +45,64 @@ export default function AgregarUsuario(){
         <LayoutAdmin>
             <Toaster/>
             <section>
-                <div>
+                <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+      <li className="breadcrumb-item">
+      <Link href="/admin/asegurados" >
+      <a >Usuarios</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Agregar usuarios</li>
+  </ol>
+</nav>
+                <div className="user-block">
                 <h1>Agregar usuario</h1>
                 <hr/>
                 <form onSubmit={addUser} >
-                    <input onChange={handleChange} value={form.dni} name="dni"  placeholder="DNI" type="number"/>
-                    <select onChange={handleChange} name="role">
-                        <option selected value="">Seleccione el rol a asignar</option>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.dni} name="dni"  placeholder="DNI" type="number"/>
+                        <label htmlFor="dni">Ingrese el DNI del usuario</label></div>
+                    <div className="form-floating">
+                    <select className="form-select" onChange={handleChange} name="role">
+                        <option selected value="">-</option>
                         <option value="user">Usuario regular</option>
                         <option value="admin" >Administrador</option>
                     </select>
-                    <input onChange={handleChange} value={form.nombres} name="nombres" placeholder="Nombres" type="text"/>
-                    <input onChange={handleChange} value={form.apellidos} name="apellidos" placeholder="Apellidos" type="text"/>
-                    <input onChange={handleChange} value={form.phone} name="phone" placeholder="Teléfono" type="number"/>
-                    <input onChange={handleChange} value={form.email} name="email" placeholder="Cuenta con la que ingresará" type="email"/>
-                    <input onChange={handleChange} value={form.password} name="password" placeholder="Contraseña" type="password"/>
+                        <label htmlFor="role">Seleccione el rol a asignar</label></div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.nombres} name="nombres" placeholder="Nombres" type="text"/>
+                        <label htmlFor="nombres">Nombres del usuario</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.apellidos} name="apellidos" placeholder="Apellidos" type="text"/>
+                        <label htmlFor="apellidos">Apellidos del usuario</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.phone} name="phone" placeholder="Teléfono" type="number"/>
+                        <label htmlFor="phone">Teléfono de contacto</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.email} name="email" placeholder="Cuenta con la que ingresará" type="email"/>
+                        <label htmlFor="email">Email con el que ingresará al sistema</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.password} name="password" placeholder="Contraseña" type="password"/>
+                        <label htmlFor="password">Contraseña</label>
+                    </div>
                     {form.role==="user" && 
-                    
-                    <input onChange={handleChange} value={form.role==="admin" ? " ":form.codAsegurado} name="codAsegurado" placeholder="Código de asegurado" type="text"/>
+                    <div className="form-floating">
+                        <input className="form-control" onChange={handleChange} value={form.role==="admin" ? " ":form.codAsegurado} name="codAsegurado" placeholder="Código de asegurado" type="text"/>
+                        <label htmlFor="codAsegurado"></label>
+                    </div>
                     }
-                    <input onChange={handleChange} value={form.address} name="address" placeholder="Dirección" type="text"/>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.address} name="address" placeholder="Dirección" type="text"/>
+                        <label  htmlFor="address">Dirección de contacto</label></div>
                     {loading?
                     <div className="loader-block" >
 
@@ -84,13 +123,8 @@ export default function AgregarUsuario(){
                 display:flex;
                 flex-direction:column;
             }
-            input{
-                margin:1rem 0;
-                padding:0.5rem;
-            }
-            select{
+            .form-floating{
                 margin:0.5rem 0;
-                padding:0.5rem;
             }
             section{
                 display:flex;
@@ -99,7 +133,7 @@ export default function AgregarUsuario(){
                 background-color:#F9FBFD;
                 padding:1rem 0;
             }
-            div{
+            .user-block{
                 background-color:#fff;
                 padding:0.5rem;
                 width:90%;

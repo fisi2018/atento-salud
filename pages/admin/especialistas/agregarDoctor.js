@@ -4,6 +4,7 @@ import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "../../../components/Loader";
 import { useState } from "react";
+import Link from "next/link";
 export default function AgregarDoctor(){
     const {form,setForm,handleChange}=useForm({
         codeDoctor:"",
@@ -42,19 +43,57 @@ export default function AgregarDoctor(){
         <LayoutAdmin>
             <Toaster/>
             <section>
-                <div>
+                 <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+      <li className="breadcrumb-item">
+      <Link href="/admin/especialistas" >
+      <a >Médicos</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Agregar médicos</li>
+  </ol>
+</nav>
+                <div className="medico-block">
                 <h1>Agregar médico</h1>
                 <hr/>
                 <form onSubmit={addDoctor} >
-                    <input onChange={handleChange} value={form.dni} name="dni"  placeholder="DNI" type="number"/>
-                    <input onChange={handleChange} placeholder="Código del médico" name="codeDoctor" value={form.codeDoctor} type="text"/>
-                    <input onChange={handleChange} value={form.nombres} name="nombres" placeholder="Nombres" type="text"/>
-                    <input onChange={handleChange} value={form.apellidos} name="apellidos" placeholder="Apellidos" type="text"/>
-                    <input onChange={handleChange} value={form.phone} name="phone" placeholder="Teléfono" type="number"/>
-                    <input onChange={handleChange} value={form.email} name="email" placeholder="Correo de contacto" type="email"/>
-                    <input onChange={handleChange} value={form.disponibilidad} name="disponibilidad" placeholder="Disponibilidad" type="text"/>
-                    
-                    <input onChange={handleChange} value={form.especialidad} name="especialidad" placeholder="Especialidad" type="text"/>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.dni} name="dni"  placeholder="DNI" type="number"/>
+                    <label htmlFor="dni">Ingrese el DNI del médico</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} placeholder="Código del médico" name="codeDoctor" value={form.codeDoctor} type="text"/>
+                        <label htmlFor="codeDoctor">Ingrese el código del médico</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.nombres} name="nombres" placeholder="Nombres" type="text"/>
+                        <label htmlFor="nombres">Nombres del médico</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.apellidos} name="apellidos" placeholder="Apellidos" type="text"/>
+                        <label htmlFor="apellidos">Apellidos del médico</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.phone} name="phone" placeholder="Teléfono" type="number"/>
+                        <label htmlFor="phone">Teléfono de contacto</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.email} name="email" placeholder="Correo de contacto" type="email"/>
+                        <label htmlFor="email">Email de contacto</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.disponibilidad} name="disponibilidad" placeholder="Disponibilidad" type="text"/>
+                        <label htmlFor="disponibilidad">Horario de atención del médico</label>
+                    </div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.especialidad} name="especialidad" placeholder="Especialidad" type="text"/>
+                        <label htmlFor="especialidad">Ingrese las especialidades del médico separadas por una ","</label>
+                    </div>
                     {loading?
                     <div className="loader-block">
                         <Loader/>
@@ -74,13 +113,8 @@ export default function AgregarDoctor(){
                 display:flex;
                 flex-direction:column;
             }
-            input{
-                margin:1rem 0;
-                padding:0.5rem;
-            }
-            select{
+            .form-floating{
                 margin:0.5rem 0;
-                padding:0.5rem;
             }
             section{
                 display:flex;
@@ -89,7 +123,7 @@ export default function AgregarDoctor(){
                 background-color:#F9FBFD;
                 padding:1rem 0;
             }
-            div{
+            .medico-block{
                 background-color:#fff;
                 padding:0.5rem;
                 width:90%;

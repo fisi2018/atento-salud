@@ -5,6 +5,7 @@ import {useForm} from "../../../components/hooks/useForm";
 import axios from "axios";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "./../../../components/Loader";
+import Link from "next/link";
 
 export default function Enfermedades() {
   const [enfermedades, setEnfermedades] = useState(false);
@@ -65,7 +66,16 @@ export default function Enfermedades() {
     <LayoutAdmin>
       <Toaster/>
       <section>
-
+          <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Enfermedades</li>
+  </ol>
+</nav>
         <div className="admin-main">
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Enfermedades a atender</h1>
@@ -112,8 +122,12 @@ export default function Enfermedades() {
             {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar enfermedad</h2>
-              <input onChange={handleChange} name="codeEnfermedad" value={form.codeEnfermedad} placeholder="Código de la enfermedad" type="text" />
-              <input onChange={handleChange} name="nombreEnfermedad" value={form.nombreEnfermedad} placeholder="Nombre de la enfermedad" type="text" />
+              <div className="form-floating">
+              <input className="form-control" onChange={handleChange} name="codeEnfermedad" value={form.codeEnfermedad} placeholder="Código de la enfermedad" type="text" />
+                <label  htmlFor="codeEnfermedad">Código de la enfermedad</label></div>
+              <div className="form-floating">
+              <input className="form-control" onChange={handleChange} name="nombreEnfermedad" value={form.nombreEnfermedad} placeholder="Nombre de la enfermedad" type="text" />
+                <label htmlFor="nombreEnfermedad">Nombre de la enfermedad</label></div>
               <article>
                 {loading?<Loader/>:
                 <>
@@ -138,12 +152,8 @@ export default function Enfermedades() {
         flex-direction:column;
         padding:2rem;
       }
-      form>input{
-        margin:0.5rem;
-        border-radius:0.5rem;
-        width:20rem;
-        padding:0.5rem;
-        border:0.1rem solid rgba(0,0,0,0.2);
+      .form-floating{
+        margin:0.5rem 0;
       }
       td>button{
         background-color:transparent;

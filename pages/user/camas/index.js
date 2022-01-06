@@ -49,7 +49,7 @@ export default function Camas(){
                 {camas.map((cama,index)=>(
                   <tr key={cama._id} >
                       <th scope="row" >{index+1}</th>
-                      <td>{cama.nombrePaciente.fecha}</td>
+                      <td>{ cama.nombrePaciente ? cama.nombrePaciente.fecha : "Cama libre"}</td>
                       <td>{cama.codeCama}</td>
                       <td>{cama.estadoCama?"Ocupada":"Libre"}</td>
                       

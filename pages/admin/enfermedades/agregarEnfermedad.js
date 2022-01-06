@@ -4,6 +4,7 @@ import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "../../../components/Loader";
 import { useState } from "react";
+import Link from "next/link";
 export default function(){
     const {form,setForm,handleChange}=useForm({
         codeEnfermedad:"",
@@ -35,13 +36,32 @@ export default function(){
         <LayoutAdmin>
             <Toaster/>
             <section>
-                <div>
+                <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+      <li className="breadcrumb-item">
+      <Link href="/admin/enfermedades" >
+      <a >Enfermedades</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Agregar enfermedades</li>
+  </ol>
+</nav>
+                <div className="enfermedad-block">
                 <h1>Agregar enfermedad</h1>
                 <hr/>
                 <form onSubmit={addEnfermedad} >
-                    <input onChange={handleChange} value={form.codeEnfermedad} name="codeEnfermedad"  placeholder="Código de la enfermedad" type="text"/>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.codeEnfermedad} name="codeEnfermedad"  placeholder="Código de la enfermedad" type="text"/>
+                        <label  htmlFor="codeEnfermedad">Código de la enfermedad</label></div>
+                    <div className="form-floating">
+                    <input className="form-control" onChange={handleChange} value={form.nombreEnfermedad} name="nombreEnfermedad" placeholder="Nombre de la enfermedad" type="text"/>
+                        <label  htmlFor="nombreEnfermedad">Nombre de la enfermedad</label></div>
                     
-                    <input onChange={handleChange} value={form.nombreEnfermedad} name="nombreEnfermedad" placeholder="Nombre de la enfermedad" type="text"/>
                     {
                         loading?
                         <div className="loader-block" >
@@ -62,13 +82,8 @@ export default function(){
                 display:flex;
                 flex-direction:column;
             }
-            input{
-                margin:1rem 0;
-                padding:0.5rem;
-            }
-            select{
+            .form-floating{
                 margin:0.5rem 0;
-                padding:0.5rem;
             }
             section{
                 display:flex;
@@ -77,7 +92,7 @@ export default function(){
                 background-color:#F9FBFD;
                 padding:1rem 0;
             }
-            div{
+            .enfermedad-block{
                 background-color:#fff;
                 padding:0.5rem;
                 width:90%;

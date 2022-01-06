@@ -6,6 +6,7 @@ import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import Loader from "./../../../components/Loader";
 import toast,{Toaster} from "react-hot-toast";
+import Link from "next/link";
 export default function Camas() {
   const [camas,setCamas]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -90,6 +91,16 @@ export default function Camas() {
     <LayoutAdmin>
       <Toaster/>
         <div className="admin-main">
+          <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Camas</li>
+  </ol>
+</nav>
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Camas para internarse</h1>
             <div className="input-group px-5 mb-5">
@@ -150,18 +161,27 @@ export default function Camas() {
               e.preventDefault();
               await update()}} >
               <h2>Editar cama</h2>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="codeCama" value={form.codeCama} placeholder="Código de la cama" type="text" />
-              <select className="form-control" onChange={handleChange}  value={form.estadoCama} name="estadoCama" >
+              <label htmlFor="codeCama">Código de la cama</label>
+              </div>
+              <div className="form-floating">
+              <select className="form-select" onChange={handleChange}  value={form.estadoCama} name="estadoCama" >
                 <option value="">Libre</option>
                 <option value={true}>Ocupada</option>
               </select>
+              <label htmlFor="estadoCama">Estado de la cama</label>
+              </div>
               {form.estadoCama && 
-              <select className="form-control" onChange={handleChange} value={form.nombrePaciente} name="nombrePaciente" >
+              <div className="form-floating">
+              <select className="form-select" onChange={handleChange} value={form.nombrePaciente} name="nombrePaciente" >
                 <option value="">Seleccione un paciente</option>
                 {pacientes.map((paciente)=>(
                   <option value={paciente._id}>{paciente.codAsegurado.codAsegurado}-{paciente.codAsegurado.nombres} {paciente.codAsegurado.apellidos}-{paciente.codEnfermedad.nombreEnfermedad}</option>
                 ))}
               </select>
+                  <label htmlFor="nombrePaciente">Paciente a internar</label>
+              </div>
               }
               <article>{
                 loading?<Loader/>:
@@ -176,6 +196,9 @@ export default function Camas() {
           </div>
         </div>
         <style jsx>{`
+        a{
+          text-decoration:none;
+        }
          h2{
         font-weight:lighter;
         text-align:center;
@@ -186,12 +209,8 @@ export default function Camas() {
         flex-direction:column;
         padding:2rem;
       }
-      form>input,select{
-        margin:0.5rem;
-        border-radius:0.5rem;
-        width:20rem;
-        padding:0.5rem;
-        border:0.1rem solid rgba(0,0,0,0.2);
+      .form-floating{
+        margin:0.5rem 0;
       }
       td>button{
         background-color:transparent;

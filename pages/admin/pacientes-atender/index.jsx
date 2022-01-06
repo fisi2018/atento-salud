@@ -5,6 +5,7 @@ import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "./../../../components/Loader";
+import Link from "next/link";
 
 export default function PacientesAtender() {
   const [pacientes, setPacientes] = useState(false);
@@ -82,8 +83,17 @@ export default function PacientesAtender() {
     <LayoutAdmin>
       <Toaster/>
       <section>
-
         <div className="admin-main">
+          <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Pacientes</li>
+  </ol>
+</nav>
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Lista de pacientes </h1>
             <div className="input-group px-5 mb-5">
@@ -123,7 +133,7 @@ export default function PacientesAtender() {
                     <td>{paciente.codEnfermedad.nombreEnfermedad}</td>
                     <td>{paciente.codAsegurado.dni}</td>
                     <td>
-                      <button onClick={async()=>{
+                      <button   title="Editar paciente" onClick={async()=>{
                         await fetchSelectOptions();
                         setForm({...paciente,id:paciente._id,
                         doctor:paciente.doctor._id,
@@ -132,7 +142,7 @@ export default function PacientesAtender() {
                         ,visibility:true})}} >
                         <i className="fas fa-edit" ></i>
                       </button>
-                      <button onClick={()=>removeItem(paciente._id)} >
+                      <button title="Remover paciente" onClick={()=>removeItem(paciente._id)} >
                         <i className="fas fa-trash-alt" ></i>
                       </button>
                     </td>
@@ -145,15 +155,26 @@ export default function PacientesAtender() {
             {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar información del paciente</h2>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="fecha" value={form.fecha} placeholder="Fecha de ingreso del paciente" type="date" />
+              <label htmlFor="fecha">Fecha de atención</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="hora" value={form.hora} placeholder="Hora de ingreso" type="time" />
-              <select className="form-control" onChange={handleChange} value={form.codAsegurado} name="codAsegurado" >
+              <label htmlFor="hora">Hora de atención</label>
+              </div>
+              <div className="form-floating">
+              <select className="form-select" onChange={handleChange} value={form.codAsegurado} name="codAsegurado" >
                 <option value="">Seleccione el asegurado</option>
                 {asegurados.map((asegurado)=>(
                   <option value={asegurado._id}>{asegurado.codAsegurado}-{asegurado.nombres} {asegurado.apellidos}</option>
                 ))}
               </select>
-              <select onChange={handleChange} className="form-control" value={form.mes} name="mes">
+                <label htmlFor="codAsegurado">Asegurado a atender</label>
+              </div>
+              <div className="form-floating">
+
+              <select onChange={handleChange} className="form-select" value={form.mes} name="mes">
                 <option value="">Seleccione el mes de ingreso</option>
                 <option value="Enero">Enero</option>
                 <option value="Febrero">Febrero</option>
@@ -168,19 +189,30 @@ export default function PacientesAtender() {
                 <option value="Noviembre">Noviembre</option>
                 <option value="Diciembre">Diciembre</option>
               </select>
+              <label htmlFor="mes">Mes de atención</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="year" value={form.year} placeholder="Año de ingreso" type="number" />
-              <select value={form.codEnfermedad} className="form-control" name="codEnfermedad" onChange={handleChange}>
+                <label htmlFor="year">Año</label>
+              </div>
+              <div className="form-floating">
+              <select value={form.codEnfermedad} className="form-select" name="codEnfermedad" onChange={handleChange}>
                 <option value="">Seleccione la enfermedad</option>
                 {enfermedades.map((enfermedad)=>(
                   <option value={enfermedad._id}>{enfermedad.codeEnfermedad}-{enfermedad.nombreEnfermedad}</option>
                 ))}
               </select>
-              <select value={form.doctor} className="form-control" onChange={handleChange} name="doctor">
+                  <label htmlFor="codEnfermedad">Enfermedad</label>
+              </div>
+              <div className="form-floating">
+              <select value={form.doctor} className="form-select" onChange={handleChange} name="doctor">
                 <option value="">Seleccione el doctor a cargo</option>
                 {doctores.map((doctor)=>(
                   <option value={doctor._id}>{doctor.codeDoctor}-{doctor.nombres} {doctor.apellidos}-{doctor.especialidad.join(",")}</option>
                 ))}
               </select>
+                <label htmlFor="doctor">Médico a cargo</label>
+              </div>
               <article>
                 {loading?
               <Loader/>:
@@ -195,6 +227,9 @@ export default function PacientesAtender() {
         </div>
       </section>
         <style jsx>{`
+        a{
+          text-decoration:none;
+        }
         h2{
         font-weight:lighter;
         text-align:center;
@@ -209,12 +244,8 @@ export default function PacientesAtender() {
         flex-direction:column;
         padding:2rem;
       }
-      form>input,select{
-        margin:0.5rem;
-        border-radius:0.5rem;
-        width:20rem;
-        padding:0.5rem;
-        border:0.1rem solid rgba(0,0,0,0.2);
+      .form-floating{
+        margin: 0.5rem 0;
       }
       td>button{
         background-color:transparent;

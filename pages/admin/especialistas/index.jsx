@@ -5,6 +5,7 @@ import LayoutAdmin from "../../../components/layout/LayoutAdmin";
 import { API } from "../../../consts/api";
 import toast,{Toaster} from "react-hot-toast";
 import Loader from "./../../../components/Loader";
+import Link from "next/link";
 
 export default function Especialistas() {
   const [doctores, setDoctores] = useState(false);
@@ -71,7 +72,16 @@ export default function Especialistas() {
     <LayoutAdmin>
       <Toaster/>
       <section>
-
+          <nav aria-label="breadcrumb">
+  <ol className="breadcrumb">
+    <li className="breadcrumb-item">
+      <Link href="/admin" >
+      <a >Inicio</a>
+      </Link>
+      </li>
+    <li className="breadcrumb-item active" aria-current="page">Médicos</li>
+  </ol>
+</nav>
         <div className="admin-main">
           <div className="d-flex w-100 flex-column justify-content-center align-items-center">
             <h1 className="mb-3">Lista de médicos</h1>
@@ -137,14 +147,40 @@ export default function Especialistas() {
              {form.visibility && 
             <form onSubmit={update} >
               <h2>Editar información de médico</h2>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="codeDoctor" value={form.codeDoctor} placeholder="Código del médico" type="text" />
+                <label htmlFor="codeDoctor">Código del médico</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="dni" value={form.dni} placeholder="DNI" type="number" />
+                <label htmlFor="dni">DNI del médico</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="especialidad" value={form.especialidad} placeholder="Especialidades" type="text" />
+                <label htmlFor="especialidad">Ingrese las especialidades del médico separadas por una ","</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="phone" value={form.phone} placeholder="Teléfono de contacto" type="number" />
+                <label htmlFor="phone">Teléfono de contacto</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="email" value={form.email} placeholder="Email de contacto" type="email" />
+                <label htmlFor="email">Email de contacto</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="nombres" value={form.nombres} placeholder="Nombres" type="text" />
+                <label htmlFor="nombres">Nombres del médico</label>
+              </div>
+              <div className="form-floating">
+                <label htmlFor=""></label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="apellidos" value={form.apellidos} placeholder="Apellidos" type="text" />
+                <label htmlFor="apellidos">Apellidos del médico</label>
+              </div>
+              <div className="form-floating">
               <input className="form-control" onChange={handleChange} name="disponibilidad" value={form.disponibilidad} placeholder="Disponibilidad" type="text" />
+                <label htmlFor="disponibilidad">Horario de atención del médico</label></div>
               <article>
                 {loading?<Loader/>:
                 <>
@@ -174,12 +210,8 @@ export default function Especialistas() {
         flex-direction:column;
         padding:2rem;
       }
-      form>input{
-        margin:0.5rem;
-        border-radius:0.5rem;
-        
-        padding:0.5rem;
-        border:0.1rem solid rgba(0,0,0,0.2);
+      .form-floating{
+        margin:0.5rem 0;
       }
       td>button{
         background-color:transparent;
